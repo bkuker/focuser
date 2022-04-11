@@ -1,5 +1,7 @@
 # Focuser
 
+![3d Render](images/header.png)
+
 A 3d printable focuser for Celestron 11" and Moonlite compatible firmware for arduino.
 
 # Hardware
