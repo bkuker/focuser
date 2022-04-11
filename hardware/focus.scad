@@ -6,11 +6,13 @@ include <libraries/gears/gears.scad>
 NEMA17SB = ["NEMA17S", 42.3, 20, 53.6/2, 25, 11, 2, 5, 20, 31, [8, 8], 3, false, false, 0, 0];
 
 module bosses(){
-    //translate([27,20,0])
-        //children();
+    translate([27,20,0])
+        children();
     translate([-27,20,0])
         children();
     translate([27,-35,0])
+        children();
+    translate([-27,-35,0])
         children();
 }
 
@@ -28,12 +30,10 @@ module screws(){
 module screws_clearance(){
     translate([0,0,30]){
         bosses(){
-            translate([0,0,-.1])
-                screw_countersink(M5_cs_cap_screw, drilled = false);
             translate([0,0,.1])
                 screw_countersink(M5_cs_cap_screw, drilled = false);
             translate([0,0,-32])
-                cylinder(35,2.55,2.55);
+                cylinder(35,2.7,2.7);
             translate([0,0,-31.5])
                     nut(M5_nut);
         }
@@ -58,26 +58,46 @@ module outside(){
     }
 }
 
-module inside(){
+module inside(d=0){
     union(){
-       cylinder(1, 29.5, 29.5, false);
+       cylinder(1, 29.5+d, 29.5+d, false);
         translate([0,-34.9,0])
-            cylinder(1, 14, 14, false);
+            cylinder(1, 14+d, 14+d, false);
+    }
+}
+
+module ring(){
+
+    translate([0,0,-16.5])
+    difference(){
+        cylinder(19, 49/2, 49/2, false);
+        for ( a = [0, 120, 240] ){
+            rotate([0,0,a])
+                translate([-20,0,0])
+                    cylinder(50, 2.25,2.25, true);
+        }
+        cylinder(50, 25/2,25/2, true);
+        translate([0,0,-1])
+            cylinder(18, 37/2,37/2, false);
     }
 }
 
 
 module base(){
+    ring();
     difference(){
-        scale([1,1,6.5])
-            outside();
-
+        union(){
+            scale([1,1,6.5])
+                outside();
+            translate([0,0,6.5])
+                inside(-.5);
+        }
         translate([0,0,-1]){
             cylinder(3.5, 49/2, 49/2, false);
             for ( a = [0, 120, 240] )
                 rotate([0,0,a])
                     translate([-20,0,0])
-                        cylinder(50, 2,2, true);
+                        cylinder(50, 4,4, true);
             cylinder(50, 25/2,25/2, true);
         }
 
@@ -86,6 +106,23 @@ module base(){
         translate([0,-34.9,0-1]){
             cylinder(50, 3, 3, true);
         }
+    }
+}
+
+module baseA(){
+    intersection(){
+        base();
+        translate([0,0,2.5-100])
+            cube(200, true);
+    }
+}
+
+
+module baseB(){
+    difference(){
+        base();
+        translate([0,0,2.5-100])
+            cube(200, true);
     }
 }
 
@@ -99,6 +136,11 @@ module shell(){
             inside();
         
         screws_clearance();
+        
+        translate([0,-34.9,-1]){
+            NEMA_screw_positions(NEMA17SB, n = 4)
+                cylinder(50,4,4);
+        }
     }
 }
 
@@ -110,7 +152,7 @@ module top(){
                     scale([1,1,4.5])
                         outside();
                     translate([0,0,-1])
-                        inside();
+                        inside(-.3);
                 }
                 translate([0,-34.9,4.5]){
                     rotate([0,180,0]){
@@ -149,28 +191,32 @@ module hardware(){
 
 
 module gears(){
-    ha = 20;
+    ha = 15;
     mod = 1.525;
-    translate([0,0,12.5]){
-        spur_gear (modul=mod, tooth_number=35, width=8, bore=19.5, pressure_angle=20, helix_angle=ha, optimized=false);
+    *translate([0,0,12.5]){
+        spur_gear (modul=mod-.06, tooth_number=35, width=5, bore=19.5, pressure_angle=20, helix_angle=ha, optimized=false);
     }
 
 
-    translate([0,-34.9,8.5]){
+    translate([0,-34.9,12.5]){
         rotate([0,0,16.5])
-        spur_gear (modul=mod, tooth_number=11, width=15, bore=5, pressure_angle=20, helix_angle=-ha, optimized=false);
+        spur_gear (modul=mod, tooth_number=11, width=10, bore=5.3, pressure_angle=20, helix_angle=-ha, optimized=false);
     }
 }
 
 *hardware();
 
-*gears();
+!gears();
 
-base();
-color("cyan", .5){
+color("pink", 1){
+    baseA();
+    baseB();
+}
+
+color("pink"){
     shell();
 }
-color("green", .5){
+color("pink"){
      top();
 }
 
