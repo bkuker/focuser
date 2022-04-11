@@ -27,3 +27,5 @@ The following libraries are used:
 They are included in this repo for ease of use.
 
 ![3d Render](images/exploded.png)
+
+![In Use](images/IMG_1626.JPG)
