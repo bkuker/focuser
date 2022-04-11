@@ -193,7 +193,7 @@ module hardware(){
 module gears(){
     ha = 15;
     mod = 1.525;
-    *translate([0,0,12.5]){
+    translate([0,0,12.5]){
         spur_gear (modul=mod-.06, tooth_number=35, width=5, bore=19.5, pressure_angle=20, helix_angle=ha, optimized=false);
     }
 
@@ -204,19 +204,20 @@ module gears(){
     }
 }
 
-*hardware();
+hardware();
 
-!gears();
+color("pink", 1)
+    gears();
 
-color("pink", 1){
+color("gray", 1){
     baseA();
     baseB();
 }
 
-color("pink"){
+color("gray",.33){
     shell();
 }
-color("pink"){
+color("gray"){
      top();
 }
 
