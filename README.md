@@ -25,3 +25,5 @@ The following libraries are used:
 * Gears Library for OpenSCAD by janssen86.
 
 They are included in this repo for ease of use.
+
+![3d Render](images/exploded.png)
